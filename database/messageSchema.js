@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
-    user: mongoose.Types.ObjectId,
-    body: String,
-    date: String,
-    room: mongoose.Types.ObjectId,
+    user: {type: mongoose.Types.ObjectId, required: true},
+    body: {type: String, required: true},
+    date: {type: Date, default: Date.now},
+    room: {type: mongoose.Types.ObjectId, required: true},
 });
 
 module.exports = messageSchema;
