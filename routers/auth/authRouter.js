@@ -7,7 +7,7 @@ const router = new express.Router();
 database = new Database(`mongodb://${login}:${password}@${ip}:27017/chat`);
 
 
-//router.post("/login", controller.login);
+
 
 const registration = async (req, res) => {
     try {
@@ -35,6 +35,28 @@ const registration = async (req, res) => {
     }
 }
 
+const signIn = async (req, res) => {
+
+}
+
+const isUserExist = async (req, res) => {
+    const login = req.params.user;
+    console.log(login, typeof login);
+    const isUserExist = await database.isUserExist({login});
+    if (isUserExist) {
+        return res.status(400).json({
+            message: "User is exist"
+        })
+    }
+    else {
+        return res.status(200).json({
+            message: "User is not exist"
+        })
+    }
+}
+
 router.post("/registration", registration);
+router.get("/user/:user", isUserExist)
+
 
 module.exports = router;
