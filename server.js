@@ -16,7 +16,7 @@ const wsServer = new ws.Server({ server: htmlServer });
 
 const corsOptions = {
     origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // For legacy browser support
+    optionsSuccessStatus: 200
 } 
 
 expressServer.use(cors(corsOptions));

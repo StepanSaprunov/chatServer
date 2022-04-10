@@ -1,12 +1,18 @@
 const Database = require("../../database/Database");
-const { login, password, ip } = require("../../config");
+const { login, password, ip, key } = require("../../config");
 const bcrypt = require("bcryptjs");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const router = new express.Router();
 database = new Database(`mongodb://${login}:${password}@${ip}:27017/chat`);
 
 
+const createToken = (data) => {
+    return jwt.sign(data, key, {
+        expiresIn: "12h"
+    })
+}
 
 
 const registration = async (req, res) => {
@@ -36,12 +42,28 @@ const registration = async (req, res) => {
 }
 
 const signIn = async (req, res) => {
-
+    try {
+        const { login, password } = req.body;
+        const user = await database.getUserByLogin(login);
+        if (!user) {
+            return res.status(400).json({
+                message: "User not found"
+            })
+        }
+        const passwordIsValid = bcrypt.compareSync(password, user.password);
+        if (!passwordIsValid) 
+            return res.status(400).json({
+                message: "Password incorrect"
+            })
+        const token = createToken({_id: user._id, roles: user.roles});
+        return res.json(token);
+    } catch (error) {
+        
+    }
 }
 
 const isUserExist = async (req, res) => {
     const login = req.params.user;
-    console.log(login, typeof login);
     const isUserExist = await database.isUserExist({login});
     if (isUserExist) {
         return res.status(400).json({
